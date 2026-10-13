@@ -1,0 +1,6 @@
+{
+  "skip": {
+    "deploy": "Claude Code installs the plugin from GitHub; merging to main is the release",
+    "deploy-verified": "Nothing is deployed"
+  }
+}

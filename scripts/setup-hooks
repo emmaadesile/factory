@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# Points git at the hooks in .githooks. Run once after cloning.
+set -euo pipefail
+cd "$(dirname "$0")/.."
+git config core.hooksPath .githooks
+chmod +x .githooks/* scripts/validate
+echo "Git hooks are on: .githooks/pre-commit runs scripts/validate --fast."

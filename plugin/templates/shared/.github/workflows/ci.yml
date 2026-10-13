@@ -1,0 +1,30 @@
+# Runs the same gate as local development: scripts/validate.
+# Adjust the runner and setup steps for the stack (references/stacks.md);
+# keep the validate step as the single source of checks.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      # {{FACTORY:SETUP}} stack setup goes here (Node, Python, Swift...)
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      # Also runs the factory doctor (see the end of scripts/validate).
+      - name: Validate
+        run: scripts/validate

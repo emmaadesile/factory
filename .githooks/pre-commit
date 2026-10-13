@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# Runs the quick checks before every commit. Skip once with --no-verify only
+# when the owner asks.
+set -euo pipefail
+exec "$(git rev-parse --show-toplevel)/scripts/validate" --fast
