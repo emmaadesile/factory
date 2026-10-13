@@ -26,8 +26,8 @@ Run every project the same way. This repo holds:
 | CI runs the doctor | warn | The doctor runs in CI, directly or from `scripts/validate` |
 | Hooks | warn | A pre-commit hook |
 | PR template | warn | `.github/pull_request_template.md` |
-| Deploy | error | A deploy workflow or platform config (Vercel, EAS, Xcode Cloud, Docker, …) |
-| Deploy verified | warn | The deploy job checks a health endpoint or smoke test |
+| Deploy | error | A workflow that deploys after merges (not one that only runs on pull requests), or a platform config (Vercel, EAS, Xcode Cloud, Fastlane) |
+| Deploy verified | warn | The deploy job calls a health endpoint or runs a smoke test |
 | No secrets | error | No committed `.env` files |
 
 A repo can skip a check with a reason in `.factory.json`:
@@ -55,6 +55,11 @@ node plugin/doctor/doctor.mjs ../my-project --json     # machine-readable
 node plugin/doctor/doctor.mjs ../my-project --strict   # warnings fail too
 ```
 
+Exit codes: 0 when no error-level check fails, 1 when one does (or a warning
+with `--strict`), 2 when the directory or `.factory.json` can't be read. If a
+repo has more than 20,000 files outside the ignored folders, the report says
+the scan stopped early.
+
 Repos vendor the doctor as `scripts/factory-doctor.mjs` (one file, no
 dependencies), so CI runs it without network access to this repo.
 
@@ -62,5 +67,5 @@ dependencies), so CI runs it without network access to this repo.
 
 ```bash
 scripts/setup-hooks   # once: turns on the pre-commit hook
-scripts/validate      # tests, plugin validation, shell syntax, and the doctor on this repo
+scripts/validate      # tests, mutation check, plugin validation, shell syntax, and the doctor on this repo
 ```

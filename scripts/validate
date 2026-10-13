@@ -15,8 +15,14 @@ step() { printf '\n\033[1m▸ %s\033[0m\n' "$1"; }
 step "doctor tests"
 node --test 'test/*.test.mjs'
 
+if [[ "$fast" == false ]]; then
+	step "mutation check (every check has a test that notices it breaking)"
+	node scripts/mutation-check.mjs
+fi
+
 step "shell syntax"
 for file in scripts/* .githooks/* plugin/templates/shared/scripts/* plugin/templates/shared/.githooks/*; do
+	[[ "$file" == *.mjs ]] && continue
 	bash -n "$file"
 done
 

@@ -41,8 +41,12 @@ Known broken: nothing known.
 ## Working rules
 
 - Work on a branch from `main` and open a PR. Never push to `main`.
-- Every doctor check needs a test that fails when the check breaks. After
-  adding one, break the check on purpose and confirm the test fails.
+- Every doctor check needs a test that fails when the check breaks.
+  `scripts/mutation-check.mjs` (part of `scripts/validate`) forces each check
+  to always pass, then always fail, and fails if the suite stays green. Give
+  each negative test a `status` assertion, not only a `detail` one.
+- Fixed paths (`scripts/validate`, workflows, hooks, PR template) are checked
+  directly, never through the file walk, which stops at 20,000 files.
 - When a check changes, update the checklist table in README.md and the fix
   text the skills rely on.
 - Before raising false-positive or false-negative rules, run the doctor
@@ -54,6 +58,7 @@ Known broken: nothing known.
 ```bash
 scripts/validate                               # every check; CI runs this
 node --test 'test/*.test.mjs'                  # doctor tests only
+node scripts/mutation-check.mjs                # each check has a test that notices it breaking
 node plugin/doctor/doctor.mjs <repo> [--json]  # run the doctor
 claude plugin validate . --strict              # marketplace manifest
 claude plugin validate plugin --strict         # plugin manifest and skills

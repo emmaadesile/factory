@@ -53,5 +53,10 @@ Rules:
   to main".
 - Add any decision the owner made this session to Decisions, with the date and
   the reason. Add anything that cost time to Gotchas.
-- Commit on the current branch (never `main`) as `Handoff: <one-line summary>`,
-  and push.
+- Commit as `Handoff: <one-line summary>` and push:
+  - **On an open PR's branch:** commit there, so Status merges with the work.
+  - **On `main`, or on a branch that's already merged** ("I've merged it"):
+    `git fetch origin main`, create `handoff/<YYYY-MM-DD>` from
+    `origin/main`, commit there, push, and open a PR (or tell the owner it
+    needs one). A Status commit on a merged branch never reaches `main`.
+  - Never push to `main`.
