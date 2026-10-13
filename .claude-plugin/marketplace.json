@@ -1,0 +1,15 @@
+{
+  "name": "factory",
+  "description": "Emmanuel's project factory: templates, a repo doctor and Claude Code skills.",
+  "owner": {
+    "name": "Emmanuel Adesile"
+  },
+  "plugins": [
+    {
+      "name": "factory",
+      "source": "./plugin",
+      "description": "Run every project the same way: a repo doctor, shared templates, and skills to retrofit repos and hand off between sessions.",
+      "version": "0.1.0"
+    }
+  ]
+}

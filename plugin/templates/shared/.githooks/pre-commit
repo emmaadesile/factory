@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# Runs the quick checks before every commit. Skip once with --no-verify only
+# when the owner asks.
+set -euo pipefail
+root="$(git rev-parse --show-toplevel)"
+if [[ -x "$root/scripts/validate" ]]; then
+	exec "$root/scripts/validate" --fast
+fi
+echo "pre-commit: no executable scripts/validate. Add one (factory-retrofit) or turn hooks off with: git config --unset core.hooksPath" >&2
+exit 1

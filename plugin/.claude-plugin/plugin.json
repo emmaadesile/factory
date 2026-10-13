@@ -1,0 +1,9 @@
+{
+  "name": "factory",
+  "version": "0.1.0",
+  "description": "Run every project the same way: a repo doctor, shared templates, and skills to retrofit repos and hand off between sessions.",
+  "author": {
+    "name": "Emmanuel Adesile"
+  },
+  "repository": "https://github.com/emmaadesile/factory"
+}

@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+# The one gate. CI, the pre-commit hook and agents all run this script, so
+# "done" means the same thing everywhere.
+#
+#   scripts/validate          every check
+#   scripts/validate --fast   skip the slow checks (the pre-commit hook uses this)
+#
+# Fill in the steps for this repo's stack: see references/stacks.md in the
+# factory plugin. Put slow steps inside `if slow "name"; then ... fi`, one
+# command per line, so a failing command stops the script.
+
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+fast=false
+[[ "${1:-}" == "--fast" ]] && fast=true
+
+step() { printf '\n\033[1m▸ %s\033[0m\n' "$1"; }
+slow() { if [[ "$fast" == true ]]; then printf '\n– skipping %s (--fast)\n' "$1"; return 1; fi; step "$1"; }
+
+# {{FACTORY:STEPS}}
+step "lint"
+echo "replace with this repo's lint command"
+step "typecheck"
+echo "replace with this repo's typecheck command"
+step "unit tests"
+echo "replace with this repo's unit test command"
+if slow "build"; then
+	echo "replace with this repo's build command"
+fi
+
+step "factory doctor"
+node scripts/factory-doctor.mjs .
+
+printf '\n\033[1;32m✓ validate passed\033[0m\n'

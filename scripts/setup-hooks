@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# Points git at the hooks in .githooks. Run once after cloning.
+set -euo pipefail
+cd "$(dirname "$0")/.."
+if [[ ! -f scripts/validate ]]; then
+	echo "setup-hooks: no scripts/validate, so the pre-commit hook would block every commit. Add it first (factory-retrofit)." >&2
+	exit 1
+fi
+# Make everything executable before turning hooks on, so a failure leaves them off.
+chmod +x .githooks/* scripts/validate
+git config core.hooksPath .githooks
+echo "Git hooks are on: .githooks/pre-commit runs scripts/validate --fast."

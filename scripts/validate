@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+# The one gate for this repo. CI and the pre-commit hook run it.
+#
+#   scripts/validate          every check
+#   scripts/validate --fast   skip the slow checks
+
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+fast=false
+[[ "${1:-}" == "--fast" ]] && fast=true
+
+step() { printf '\n\033[1m▸ %s\033[0m\n' "$1"; }
+
+step "doctor tests"
+node --test 'test/*.test.mjs'
+
+if [[ "$fast" == false ]]; then
+	step "mutation check (every check has a test that notices it breaking)"
+	node scripts/mutation-check.mjs
+fi
+
+step "shell syntax"
+for file in scripts/* .githooks/* plugin/templates/shared/scripts/* plugin/templates/shared/.githooks/*; do
+	[[ "$file" == *.mjs ]] && continue
+	bash -n "$file"
+done
+
+step "JSON manifests"
+for file in .claude-plugin/marketplace.json plugin/.claude-plugin/plugin.json; do
+	node -e 'JSON.parse(require("node:fs").readFileSync(process.argv[1], "utf8"))' "$file"
+done
+
+if command -v claude >/dev/null 2>&1; then
+	step "plugin manifests"
+	claude plugin validate . --strict
+	claude plugin validate plugin --strict
+elif [[ "$fast" == false ]]; then
+	printf '\n– skipping plugin manifests (the claude CLI is not installed)\n'
+fi
+
+step "factory doctor on this repo"
+node plugin/doctor/doctor.mjs . --strict
+
+printf '\n\033[1;32m✓ validate passed\033[0m\n'
